@@ -9,10 +9,7 @@ import { BaseView } from './BaseView';
 export class AmountView extends BaseView {
 
     private text: PIXI.Text;
-    protected background: PIXI.Graphics;
     private amount: number = 0;
-    
-
 
     constructor() {
         super();
@@ -23,23 +20,21 @@ export class AmountView extends BaseView {
         this.amount = Game.AMOUNT;
         this.createBackground();
         this.createScore();
+        this.visible = false;
     }
 
     protected createBackground() {
-        this.background = new PIXI.Graphics();
-        this.background.lineStyle(2, 0x253769, 1)
-        this.background.beginFill(0xffffff)
-        this.background.drawRoundedRect(0, 0, GameSizes.resultHeight * 3, GameSizes.resultHeight, 10)
-        this.background.endFill();
+        const background = new PIXI.Graphics();
+        background.lineStyle(2, 0x253769, 1)
+        background.beginFill(0xffffff)
+        background.drawRoundedRect(0, 0, GameSizes.resultHeight * 3, GameSizes.resultHeight, 10);
+        background.endFill();
 
-        this.background.x = GameSizes.resultX;
-        this.background.y = GameSizes.resultY;
+        const texture: PIXI.Texture = GameApplication.app.renderer.generateTexture(background);
 
-        this.background.endFill();
+        this.background = new PIXI.Sprite(texture);
 
-        this.background.cacheAsBitmap = true;
-
-        this.addChild(this.background)
+        this.addChild(this.background);
     }
 
     private createScore() {
@@ -66,4 +61,7 @@ export class AmountView extends BaseView {
         this.text.text = `${this.amount.toFixed(2)}`;
     }
 
+    protected onResize(): void {
+        
+    }
 }

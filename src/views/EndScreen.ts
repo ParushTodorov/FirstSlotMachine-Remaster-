@@ -19,17 +19,11 @@ export class EndScreen extends BaseView {
     }
 
     protected createBackground() {
-        this.background = new PIXI.Graphics();
-        this.background.lineStyle(5, 0xffffff, 1)
-        this.background.beginFill(0x253769, 0);
-        this.background.drawRect(0, 0, GameApplication.STAGE_WIDTH, GameApplication.STAGE_HEIGHT);
-        this.background.beginFill();
-        this.background.cacheAsBitmap = true;
 
-        const sprite: PIXI.Sprite = new PIXI.Sprite(GameApplication.BACKGROUND);
-        sprite.alpha = 0.85;
 
-        this.addChild(sprite);
+        this.background = new PIXI.Sprite(GameApplication.BACKGROUND);
+        this.background.alpha = 0.85;
+        
         this.addChild(this.background)
     }
 

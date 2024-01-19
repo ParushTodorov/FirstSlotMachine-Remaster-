@@ -44,7 +44,7 @@ export class GameView extends BaseView {
         this.createShowWindow(); 
         this.hide();
         this.createDispatchers();
-        GameApplication.getApp().ticker.add(this.update, this);
+        GameApplication.app.ticker.add(this.update, this);
     }
 
     private createDispatchers() {
@@ -53,19 +53,10 @@ export class GameView extends BaseView {
 
     //BACKGROUND
     protected createBackground() {
-        this.background = new PIXI.Graphics();
-        this.background.lineStyle(5, 0xffffff, 1)
-        this.background.beginFill(0x253769, 0);
-        this.background.drawRect(0, 0, GameApplication.STAGE_WIDTH, GameApplication.STAGE_HEIGHT);
-        this.background.beginFill();
-        this.background.cacheAsBitmap = true;
+        this.background = new PIXI.Sprite(GameApplication.BACKGROUND);
+        this.background.alpha = 0.8;
 
-        const sprite: PIXI.Sprite = new PIXI.Sprite(GameApplication.BACKGROUND);
-        sprite.alpha = 0.8;
-
-        this.addChild(sprite);
-        this.addChild(this.background)
-
+        this.addChild(this.background);
     }
 
     // OBJECTS
@@ -165,12 +156,12 @@ export class GameView extends BaseView {
 
     private activate() {
         this.activateRealms();
-        GameApplication.getApp().ticker.add(this.update, this);
+        GameApplication.app.ticker.add(this.update, this);
     }
 
     private deactivate() {
         this.deactivateRealms();
-        GameApplication.getApp().ticker.remove(this.update, this);
+        GameApplication.app.ticker.remove(this.update, this);
     }
 
     public registerRealm(id: number, gameObj: Realm) {
@@ -254,7 +245,7 @@ export class GameView extends BaseView {
         });
 
         this.gameObjects.forEach((gameObj) => {
-            gameObj.update(deltaTime)
+            gameObj.update()
         })
     }
 }

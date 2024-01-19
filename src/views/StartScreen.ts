@@ -5,10 +5,12 @@ import { EventDispatcher } from "../EventDispatcher";
 import { GameEvents } from "../GameEvents";
 import { GameSizes } from '../GameSizes';
 import { Game } from '../GameController';
+import { setScale } from './utilitis/ScaleSetter';
 
 export class StartScreen extends BaseView {
 
     private tittle: PIXI.Text;
+    private startButton: PIXI.Container;
     
     private amountText: PIXI.Text;
     private amount: number = Game.AMOUNT;
@@ -29,41 +31,35 @@ export class StartScreen extends BaseView {
         this.amount = Game.AMOUNT;
         this.arrowButton = PIXI.Texture.from('assets/image/arrowButton1.jpg')
         this.createText();
-        this.createCashInput();
-        this.createBetInput();
         this.createStartButton();
     }
 
     protected createBackground() {
-        this.background = new PIXI.Graphics();
-        this.background.lineStyle(5, 0xffffff, 1)
-        this.background.beginFill(0x253769, 0);
-        this.background.drawRect(0, 0, GameApplication.STAGE_WIDTH, GameApplication.STAGE_HEIGHT);
-        this.background.beginFill();
-        this.background.cacheAsBitmap = true;
-
-        const sprite: PIXI.Sprite = new PIXI.Sprite(GameApplication.BACKGROUND);
-
-        this.addChild(sprite);
+        this.background = new PIXI.Sprite(GameApplication.BACKGROUND);
         this.addChild(this.background)
     }
 
     private createText() {
-        this.tittle = new PIXI.Text('FLOWERS LUCK', {
-            fontFamily: 'Papyrus',
-            fill: 0x253769,
-            fontSize: 70,
-            padding: 10,
-            dropShadow: true, 
-            dropShadowAlpha: 0.15,  
-        });
+        if(!this.tittle) {
+            this.tittle = new PIXI.Text('FLOWERS LUCK', {
+                fontFamily: 'Papyrus',
+                fill: 0x253769,
+                fontSize: 70,
+                padding: 10, 
+                dropShadow: true, 
+                dropShadowAlpha: 0.15,  
+            });
+    
+            this.tittle.resolution = 2;
+            this.tittle.anchor.set(0.5);
+    
+            setScale(this.tittle, Math.min(GameSizes.STAGE_WIDTH, GameSizes.STAGE_HEIGHT) * 0.9, this.tittle.width);
 
-        this.tittle.resolution = 2;
-        this.tittle.anchor.set(0.5);
-        this.tittle.x = this.background.width / 2;
-        this.tittle.y = 150;
-
-        this.addChild(this.tittle);
+            this.addChild(this.tittle);    
+        }
+        
+        this.tittle.x = GameSizes.STAGE_WIDTH / 2;
+        this.tittle.y = this.background.height * 0.15;
     }
 
     private createCashInput() {
@@ -134,37 +130,42 @@ export class StartScreen extends BaseView {
     }
 
     private createStartButton() {
-        const gfx: PIXI.Graphics = new PIXI.Graphics;
-        gfx.lineStyle(3, 0x253769, 1)
-        gfx.beginFill(0xffffff)
-        gfx.drawRoundedRect(0, 0, GameSizes.buttonWidth, GameSizes.buttonHeight, 10)
-        gfx.endFill();
-        gfx.cacheAsBitmap = true;
+        const radius: number = Math.min(GameSizes.STAGE_HEIGHT, GameSizes.STAGE_WIDTH) * 0.15;
 
-        this.addChild(gfx);
+        if (!this.startButton) {
+            this.startButton = new PIXI.Container(); 
 
-        gfx.x = GameSizes.buttonX;
-        gfx.y = GameSizes.buttonY;
+            const gfx: PIXI.Graphics = new PIXI.Graphics;
+            gfx.lineStyle(3, 0x253769, 1)
+            gfx.beginFill(0xffffff)
+            gfx.drawCircle(0, 0, radius)
+            gfx.endFill();
+            gfx.cacheAsBitmap = true;
+    
+            this.startButton.addChild(gfx);
+    
+            gfx.interactive = true;
+            gfx.buttonMode = true;
+            gfx.on("pointerdown", () => { EventDispatcher.dispatcher.emit(GameEvents.GAME_START) }, this);
+    
+            const text = new PIXI.Text('START', {
+                fontFamily: 'Papyrus',
+                fontSize: 20,
+                fontWeight: 'bold',
+                fill: 0x253769 
+            })
+            
+            setScale(text, radius, text.width) 
+            text.anchor.set(0.5);
 
-        gfx.interactive = true;
-        gfx.buttonMode = true;
-        gfx.on("pointerdown", () => { EventDispatcher.getInstance().getDispatcher().emit(GameEvents.GAME_START) }, this);
+            this.startButton.addChild(text);
+            this.addChild(this.startButton);
+        }
 
-        const text = new PIXI.Text('START', {
-            fontFamily: 'Papyrus',
-            fontSize: 20,
-            fontWeight: 'bold',
-            fill: 0x253769, 
-            padding: 10,
-            dropShadow: true, 
-            dropShadowAlpha: 0.15,  
-        })
+        this.startButton.x = GameSizes.STAGE_WIDTH * 0.5;
+        this.startButton.y = GameSizes.STAGE_HEIGHT * 0.5;
 
-        text.anchor.set(0.5);
-        text.x = GameSizes.buttonX + GameSizes.buttonWidth / 2;
-        text.y = GameSizes.buttonY + GameSizes.buttonHeight / 2;
-
-        this.addChild(text);
+        setScale(this.startButton, radius * 2, this.startButton.width);
     }
 
     private createArrows(gfx: PIXI.Graphics, button: string){
@@ -236,5 +237,12 @@ export class StartScreen extends BaseView {
     
     public getBet(): number {
         return this.bet;
+    }
+
+    protected onResize() {
+        super.onResize();
+
+        this.createText();
+        this.createStartButton();
     }
 }
