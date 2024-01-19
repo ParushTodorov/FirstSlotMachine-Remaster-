@@ -12,5 +12,6 @@ export class GameEvents {
     public static GAME_START: string = "GAME_START";
     public static GAME_SET: string = "GAME_SET";
 
+    public static ON_RESIZE: string = "ON_RESIZE";
 }
 

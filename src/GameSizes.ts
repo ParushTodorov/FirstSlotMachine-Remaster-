@@ -1,7 +1,7 @@
 export class GameSizes {
     
-    public static STAGE_WIDTH: number = 800;
-    public static STAGE_HEIGHT: number = 3 / 4 * GameSizes.STAGE_WIDTH;
+    public static STAGE_WIDTH: number = window.innerWidth;
+    public static STAGE_HEIGHT: number = window.innerHeight;
 
     //Realm
     public static realmWidth: number = 1 / 7 * GameSizes.STAGE_WIDTH;
@@ -15,7 +15,7 @@ export class GameSizes {
     //Symbol
     public static symbolWidth: number = 1 / 8 * GameSizes.STAGE_WIDTH;
     public static symbolX: number = GameSizes.realmX + GameSizes.realmBorder;
-    public static symbolY: number = 0;
+    public static symbolY: number = 0 + GameSizes.realmBorder;
     public static symbolNext: number = GameSizes.realmWidth - GameSizes.realmBorder;
 
     //Realm Mask
